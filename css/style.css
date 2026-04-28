@@ -1,0 +1,50 @@
+:root {
+    --primary: #FF7622;
+    --dark: #181C2E;
+    --gray: #676767;
+}
+
+* { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+body {
+    margin: 0;
+    background-color: #E5E5E5; /* Desktop background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* AUTOMATIC STRETCH VIEWPORT */
+.app-viewport {
+    width: 100%;
+    max-width: 480px; /* Limits width on big screens */
+    height: 100vh;    /* Fills the height of any phone */
+    background: #FFFFFF;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(0,0,0,0.1);
+}
+
+.btn-orange {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 18px;
+    width: 100%;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Scoped scrollable content */
+.scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
