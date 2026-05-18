@@ -1,0 +1,81 @@
+<?php
+// pages/profile.php
+
+if (!isset($_SESSION['customer_id'])) {
+    header("Location: index.php?page=login");
+    exit;
+}
+
+$stmt = $pdo->prepare("SELECT * FROM customers WHERE customer_id = ?");
+$stmt->execute([$_SESSION['customer_id']]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
+    header("Location: logout.php");
+    exit;
+}
+
+$msg = isset($_GET['msg']) && $_GET['msg'] == 'updated' ? 'Profile updated successfully!' : '';
+?>
+
+<div style="height: 100%; display: flex; flex-direction: column;">
+    
+    <div class="scroll-area" style="padding: 30px 20px 100px 20px;">
+        
+        <div style="display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 30px;">
+            <h2 style="margin: 0; color: var(--dark); font-size: 20px;">Personal Profile</h2>
+        </div>
+
+        <?php if ($msg): ?>
+            <div style="background: #E5F6DF; color: #1E4620; padding: 12px; border-radius: 12px; margin-bottom: 25px; text-align: center; font-size: 14px; font-weight: bold;">
+                <?= $msg ?>
+            </div>
+        <?php endif; ?>
+
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;">
+            <div style="width: 100px; height: 100px; background: #FFD27C; border-radius: 50%; display: grid; place-items: center; font-size: 40px; font-weight: bold; color: var(--primary); margin-bottom: 15px; box-shadow: 0 10px 20px rgba(255, 118, 34, 0.2);">
+                <?= strtoupper(substr($user['name'], 0, 1)) ?>
+            </div>
+            <h3 style="margin: 0; color: var(--dark); font-size: 22px;"><?= htmlspecialchars($user['name']) ?></h3>
+            <p style="margin: 5px 0 0 0; color: var(--gray); font-size: 14px;">Foodel Member</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 35px;">
+            <div style="background: #F6F6F6; padding: 18px; border-radius: 15px; border: 1px solid #eee;">
+                <small style="color: var(--gray); font-size: 11px; font-weight: bold; text-transform: uppercase;">Full Name</small>
+                <div style="color: var(--dark); font-weight: 600; margin-top: 5px; font-size: 15px;"><?= htmlspecialchars($user['name']) ?></div>
+            </div>
+            <div style="background: #F6F6F6; padding: 18px; border-radius: 15px; border: 1px solid #eee;">
+                <small style="color: var(--gray); font-size: 11px; font-weight: bold; text-transform: uppercase;">Email Address</small>
+                <div style="color: var(--dark); font-weight: 600; margin-top: 5px; font-size: 15px;"><?= htmlspecialchars($user['email']) ?></div>
+            </div>
+            <div style="background: #F6F6F6; padding: 18px; border-radius: 15px; border: 1px solid #eee;">
+                <small style="color: var(--gray); font-size: 11px; font-weight: bold; text-transform: uppercase;">Phone Number</small>
+                <div style="color: var(--dark); font-weight: 600; margin-top: 5px; font-size: 15px;"><?= htmlspecialchars($user['phone']) ?></div>
+            </div>
+            <div style="background: #F6F6F6; padding: 18px; border-radius: 15px; border: 1px solid #eee;">
+                <small style="color: var(--gray); font-size: 11px; font-weight: bold; text-transform: uppercase;">Delivery Address</small>
+                <div style="color: var(--dark); font-weight: 600; margin-top: 5px; font-size: 15px; line-height: 1.4;"><?= htmlspecialchars($user['address']) ?></div>
+            </div>
+        </div>
+
+        <a href="index.php?page=edit_profile" style="text-decoration: none;">
+            <button class="btn-orange" style="margin-bottom: 15px;">
+                Edit Profile
+            </button>
+        </a>
+
+        <a href="logout.php" style="text-decoration: none;">
+            <button class="btn-orange" style="background: #FFF1F1; color: #FF4B4B; border: 1px solid #FFE0E0; margin-bottom: 20px;">
+                Log Out
+            </button>
+        </a>
+    </div>
+
+    <nav style="height: 85px; background: #fff; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #f0f0f0; border-radius: 25px 25px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.03); position: absolute; bottom: 0; width: 100%; max-width: 480px;">
+        <div onclick="window.location.href='index.php?page=home'" style="color: #98A8B8; font-size: 26px; cursor: pointer;">🏠</div>
+        <div style="color: #98A8B8; font-size: 26px; cursor: pointer;">🔍</div>
+        <div style="color: #98A8B8; font-size: 26px; cursor: pointer;">📄</div>
+        <div style="color: var(--primary); font-size: 26px; cursor: pointer;">👤</div>
+    </nav>
+</div>
