@@ -1,386 +1,72 @@
 <?php
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location:index.php?page=login");
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: index.php?page=login");
     exit;
 }
 
-$error = '';
-$success = '';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
+if (isset($_POST['save_product'])) {
     $name = trim($_POST['name']);
-    $type = trim($_POST['type']);
-    $price = trim($_POST['price']);
+    $type = $_POST['type'];
+    $price = intval($_POST['price']);
     $description = trim($_POST['description']);
-    $image = trim($_POST['image_url']);
+    $image_url = trim($_POST['image_url']);
 
-    if (
-        empty($name) ||
-        empty($type) ||
-        empty($price) ||
-        empty($description) ||
-        empty($image)
-    ) {
-
-        $error = "All fields are required.";
-
+    if ($name != "" && $price > 0 && $description != "" && $image_url != "") {
+        $stmt = $pdo->prepare("INSERT INTO products (name, type, price, description, image_url) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $type, $price, $description, $image_url]);
+        header("Location: index.php?page=admin_dashboard");
+        exit;
     } else {
-
-        // Bersihkan harga biar hanya angka
-        $cleanPrice = preg_replace('/[^0-9]/', '', $price);
-
-        try {
-
-            $stmt = $pdo->prepare("
-                INSERT INTO products
-                (
-                    name,
-                    type,
-                    price,
-                    description,
-                    image_url
-                )
-                VALUES
-                (
-                    ?, ?, ?, ?, ?
-                )
-            ");
-
-            $stmt->execute([
-                $name,
-                $type,
-                $cleanPrice,
-                $description,
-                $image
-            ]);
-
-            $success = "Product added successfully!";
-
-        } catch (PDOException $e) {
-
-            $error = "Failed to add product.";
-
-        }
+        $error = "Semua bidang formulir wajib diisi dengan benar!";
     }
 }
-
 ?>
 
-<div style="height:100%;display:flex;flex-direction:column;">
-
-    <div class="scroll-area" style="padding:20px;">
-
-        <!-- HEADER -->
-        <div
-            style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:30px;
-            "
-        >
-
-            <div>
-
-                <h2 style="margin:0;color:var(--dark);">
-                    Add Product
-                </h2>
-
-                <p style="margin-top:5px;color:var(--gray);">
-                    Add food or drink menu
-                </p>
-
-            </div>
-
-            <a
-                href="index.php?page=admin_dashboard"
-                style="
-                text-decoration:none;
-                background:#F1F5F9;
-                width:45px;
-                height:45px;
-                border-radius:50%;
-                display:grid;
-                place-items:center;
-                color:black;
-                font-weight:bold;
-                "
-            >
-                ✕
-            </a>
-
-        </div>
-
-        <!-- ERROR -->
-        <?php if($error): ?>
-
-            <div
-                style="
-                background:#FFE5E5;
-                color:#D8000C;
-                padding:15px;
-                border-radius:15px;
-                margin-bottom:20px;
-                "
-            >
-                <?= $error ?>
-            </div>
-
-        <?php endif; ?>
-
-        <!-- SUCCESS -->
-        <?php if($success): ?>
-
-            <div
-                style="
-                background:#E7F9ED;
-                color:#157347;
-                padding:15px;
-                border-radius:15px;
-                margin-bottom:20px;
-                "
-            >
-                <?= $success ?>
-            </div>
-
-        <?php endif; ?>
-
-        <!-- FORM -->
-        <form method="POST">
-
-            <div
-                style="
-                background:white;
-                border-radius:25px;
-                padding:25px;
-                box-shadow:0 10px 30px rgba(0,0,0,0.05);
-                "
-            >
-
-                <!-- PRODUCT NAME -->
-                <div style="margin-bottom:20px;">
-
-                    <label
-                        style="
-                        font-size:13px;
-                        font-weight:bold;
-                        color:var(--gray);
-                        text-transform:uppercase;
-                        "
-                    >
-                        Product Name
-                    </label>
-
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="Burger Crispy"
-                        required
-                        style="
-                        width:100%;
-                        margin-top:8px;
-                        padding:16px;
-                        border-radius:15px;
-                        border:1px solid #eee;
-                        background:#F8FAFC;
-                        outline:none;
-                        font-size:15px;
-                        "
-                    >
-
-                </div>
-
-                <!-- CATEGORY -->
-                <div style="margin-bottom:20px;">
-
-                    <label
-                        style="
-                        font-size:13px;
-                        font-weight:bold;
-                        color:var(--gray);
-                        text-transform:uppercase;
-                        "
-                    >
-                        Category
-                    </label>
-
-                    <select
-                        name="type"
-                        required
-                        style="
-                        width:100%;
-                        margin-top:8px;
-                        padding:16px;
-                        border-radius:15px;
-                        border:1px solid #eee;
-                        background:#F8FAFC;
-                        outline:none;
-                        font-size:15px;
-                        "
-                    >
-
-                        <option value="">
-                            Select category
-                        </option>
-
-                        <option value="Food">
-                            Food
-                        </option>
-
-                        <option value="Drink">
-                            Drink
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <!-- PRICE -->
-                <div style="margin-bottom:20px;">
-
-                    <label
-                        style="
-                        font-size:13px;
-                        font-weight:bold;
-                        color:var(--gray);
-                        text-transform:uppercase;
-                        "
-                    >
-                        Price
-                    </label>
-
-                    <div
-                        style="
-                        display:flex;
-                        align-items:center;
-                        background:#F8FAFC;
-                        border:1px solid #eee;
-                        border-radius:15px;
-                        padding-left:15px;
-                        margin-top:8px;
-                        "
-                    >
-
-                        <span
-                            style="
-                            font-weight:bold;
-                            color:var(--primary);
-                            font-size:18px;
-                            "
-                        >
-                            Rp
-                        </span>
-
-                        <input
-                            type="text"
-                            name="price"
-                            placeholder="25000"
-                            required
-                            style="
-                            width:100%;
-                            padding:16px;
-                            border:none;
-                            background:transparent;
-                            outline:none;
-                            font-size:15px;
-                            "
-                        >
-
-                    </div>
-
-                    <small
-                        style="
-                        color:var(--gray);
-                        display:block;
-                        margin-top:8px;
-                        "
-                    >
-                        Numbers only.
-                    </small>
-
-                </div>
-
-                <!-- DESCRIPTION -->
-                <div style="margin-bottom:20px;">
-
-                    <label
-                        style="
-                        font-size:13px;
-                        font-weight:bold;
-                        color:var(--gray);
-                        text-transform:uppercase;
-                        "
-                    >
-                        Description
-                    </label>
-
-                    <textarea
-                        name="description"
-                        rows="4"
-                        placeholder="Delicious spicy burger..."
-                        required
-                        style="
-                        width:100%;
-                        margin-top:8px;
-                        padding:16px;
-                        border-radius:15px;
-                        border:1px solid #eee;
-                        background:#F8FAFC;
-                        outline:none;
-                        font-size:15px;
-                        resize:none;
-                        "
-                    ></textarea>
-
-                </div>
-
-                <!-- IMAGE URL -->
-                <div style="margin-bottom:30px;">
-
-                    <label
-                        style="
-                        font-size:13px;
-                        font-weight:bold;
-                        color:var(--gray);
-                        text-transform:uppercase;
-                        "
-                    >
-                        Image URL
-                    </label>
-
-                    <input
-                        type="text"
-                        name="image_url"
-                        placeholder="https://images.unsplash.com/..."
-                        required
-                        style="
-                        width:100%;
-                        margin-top:8px;
-                        padding:16px;
-                        border-radius:15px;
-                        border:1px solid #eee;
-                        background:#F8FAFC;
-                        outline:none;
-                        font-size:15px;
-                        "
-                    >
-
-                </div>
-
-                <!-- BUTTON -->
-                <button
-                    type="submit"
-                    class="btn-orange"
-                >
-                    Add Product
-                </button>
-
-            </div>
-
-        </form>
-
+<div style="max-width: 600px; margin: 0 auto;">
+    <div style="margin-bottom: 25px;">
+        <a href="index.php?page=admin_dashboard" style="text-decoration:none; color:#4F46E5; font-weight:600; font-size:14px;">← Kembali ke Dashboard</a>
+        <h1 style="margin: 15px 0 5px 0; font-size: 24px; color:#1E293B;">Tambah Menu Kuliner</h1>
+        <p style="margin:0; color:#64748B; font-size:14px;">Masukkan rincian informasi produk makanan/minuman baru</p>
     </div>
 
+    <?php if (isset($error)): ?>
+        <div style="background: #FEE2E2; color: #991B1B; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 14px;">
+            <?= $error ?>
+        </div>
+    <?php endif; ?>
+
+    <div style="background: white; padding: 30px; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <form method="POST">
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#334155; margin-bottom:8px;">Nama Produk</label>
+                <input type="text" name="name" required placeholder="Misal: Nasi Goreng Spesial" style="width:100%; padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; outline:none; font-size:14px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#334155; margin-bottom:8px;">Kategori</label>
+                <select name="type" style="width:100%; padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; outline:none; font-size:14px; background:white;">
+                    <option value="Makanan">Makanan</option>
+                    <option value="Minuman">Minuman</option>
+                    <option value="Cemilan">Cemilan</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#334155; margin-bottom:8px;">Harga Jual (Rp)</label>
+                <input type="number" name="price" required placeholder="Contoh: 25000" style="width:100%; padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; outline:none; font-size:14px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#334155; margin-bottom:8px;">URL Tautan Gambar</label>
+                <input type="url" name="image_url" required placeholder="https://images.unsplash.com/... atau images/nama.jpg" style="width:100%; padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; outline:none; font-size:14px;">
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#334155; margin-bottom:8px;">Deskripsi Hidangan</label>
+                <textarea name="description" required placeholder="Tulis komposisi rasa atau detail produk..." style="width:100%; height:100px; padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; outline:none; font-size:14px; resize:none; font-family:inherit;"></textarea>
+            </div>
+
+            <button type="submit" name="save_product" style="width:100%; background:#4F46E5; color:white; border:none; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; font-size:15px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);">Simpan ke Katalog</button>
+        </form>
+    </div>
 </div>

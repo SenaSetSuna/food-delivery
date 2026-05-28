@@ -1,50 +1,237 @@
-:root {
-    --primary: #FF7622;
-    --dark: #181C2E;
-    --gray: #676767;
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
 }
-
-* { box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
 body {
-    margin: 0;
-    background-color: #E5E5E5; /* Desktop background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: #F8FAFC;
+    color: #1E293B;
     min-height: 100vh;
-}
-
-/* AUTOMATIC STRETCH VIEWPORT */
-.app-viewport {
-    width: 100%;
-    max-width: 480px; /* Limits width on big screens */
-    height: 100vh;    /* Fills the height of any phone */
-    background: #FFFFFF;
-    position: relative;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    box-shadow: 0 0 50px rgba(0,0,0,0.1);
 }
 
-.btn-orange {
-    background: var(--primary);
+/* Container Utama Adaptif */
+.main-responsive-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 100px; /* Ruang aman agar tidak tertutup bottom nav di HP */
+}
+
+/* ==========================================================================
+   HALAMAN HOME / CUSTOMER COMPONENTS
+   ========================================================================== */
+.home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.user-greet h2 {
+    font-size: 20px;
+    color: #0F172A;
+    font-weight: 700;
+}
+
+.user-greet p {
+    font-size: 14px;
+    color: #64748B;
+    margin-top: 2px;
+}
+
+/* Kategori Filter */
+.category-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.category-badge {
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #475569;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.category-badge.active, .category-badge:hover {
+    background: #4F46E5;
+    color: white;
+    border-color: #4F46E5;
+}
+
+/* Grid Produk Responsif */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #E2E8F0;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.product-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 12px;
+    background-color: #F1F5F9;
+}
+
+.product-info {
+    margin-top: 12px;
+    flex-grow: 1;
+}
+
+.product-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0F172A;
+    margin-bottom: 4px;
+}
+
+.product-desc {
+    font-size: 12px;
+    color: #64748B;
+    line-height: 1.4;
+    height: 34px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    margin-bottom: 12px;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.product-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #16A34A;
+}
+
+.btn-add-cart {
+    background: #4F46E5;
     color: white;
     border: none;
-    border-radius: 12px;
-    padding: 18px;
-    width: 100%;
-    font-weight: 700;
-    text-transform: uppercase;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
     cursor: pointer;
-    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.2s;
 }
 
-/* Scoped scrollable content */
-.scroll-area {
-    flex: 1;
-    overflow-y: auto;
-    scrollbar-width: none;
+.btn-add-cart:hover {
+    background: #3730A3;
 }
-.scroll-area::-webkit-scrollbar { display: none; }
+
+/* Navigasi Bawah Berbasis Mobile */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    z-index: 999;
+}
+
+.nav-item {
+    text-decoration: none;
+    color: #64748B;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.nav-item.active {
+    color: #4F46E5;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES RESPONSIF
+   ========================================================================== */
+
+/* Pengaturan Layar HP / Smartphone (< 768px) */
+@media (max-width: 767px) {
+    .main-responsive-wrapper {
+        padding: 16px;
+        padding-bottom: 90px;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr); /* Menjadi 2 kolom di HP */
+        gap: 12px;
+    }
+
+    .product-card {
+        padding: 12px;
+    }
+
+    .product-image {
+        height: 120px;
+    }
+    
+    .product-title {
+        font-size: 14px;
+    }
+
+    .product-price {
+        font-size: 14px;
+    }
+}
+
+/* Pengaturan Layar Desktop / Laptop (>= 768px) */
+@media (min-width: 768px) {
+    /* Sembunyikan Bottom Navifikasi di monitor besar, ganti jadi top navbar logis jika perlu */
+    .bottom-nav {
+        max-width: 450px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+    }
+}
