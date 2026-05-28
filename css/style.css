@@ -41,10 +41,24 @@ body {
     font-size: 14px;
 }
 
+.form-input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    background: #F6F6F6;
+    outline: none;
+}
+
 /* Scoped scrollable content */
 .scroll-area {
     flex: 1;
     overflow-y: auto;
-    scrollbar-width: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px 20px;
 }
 .scroll-area::-webkit-scrollbar { display: none; }
