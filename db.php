@@ -19,6 +19,19 @@ try {
         admin_profile TEXT
     )");
 
+    // Ensure the Transaction table has a payment method column for checkout.
+    $transactionCols = $pdo->query('PRAGMA table_info("Transaction")')->fetchAll(PDO::FETCH_ASSOC);
+    $hasPaymentMethod = false;
+    foreach ($transactionCols as $col) {
+        if ($col['name'] === 'payment_method') {
+            $hasPaymentMethod = true;
+            break;
+        }
+    }
+    if (!$hasPaymentMethod) {
+        $pdo->exec('ALTER TABLE "Transaction" ADD COLUMN payment_method TEXT DEFAULT "Qris"');
+    }
+
     $adminCount = $pdo->query("SELECT COUNT(*) FROM User_admin")->fetchColumn();
     if ($adminCount == 0) {
         $stmtAdmin = $pdo->prepare("INSERT INTO User_admin (name, email, password, admin_profile) VALUES (?, ?, ?, ?)");

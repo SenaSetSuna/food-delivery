@@ -1,3 +1,65 @@
+/* Modern cart quantity badge */
+.cart-qty-badge {
+    background: linear-gradient(90deg, #FF7622 60%, #FFB86C 100%);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    box-shadow: 0 2px 8px rgba(255, 118, 34, 0.10);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    transition: background 0.2s;
+}
+
+/* Modern/minimalist payment select */
+.modern-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 2px;
+}
+.modern-select-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.modern-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    padding: 14px 44px 14px 16px;
+    border-radius: 14px;
+    border: 1.5px solid #e5e7eb;
+    background: #f9f9f9;
+    color: var(--dark);
+    font-size: 15px;
+    font-weight: 600;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(24,28,46,0.03);
+    transition: border 0.2s, box-shadow 0.2s;
+}
+.modern-select:focus {
+    border: 1.5px solid var(--primary);
+    box-shadow: 0 2px 12px rgba(255, 118, 34, 0.10);
+}
+.modern-select-arrow {
+    position: absolute;
+    right: 18px;
+    pointer-events: none;
+    color: #FF7622;
+    font-size: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold;
+    opacity: 0.8;
+}
 :root {
     --primary: #FF7622;
     --dark: #181C2E;

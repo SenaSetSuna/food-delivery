@@ -58,9 +58,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     }
                 }
 
+                $payment_method = isset($_POST['payment_method']) ? trim($_POST['payment_method']) : 'Qris';
+                $allowed_payment_methods = ['Qris', 'Dana', 'Card'];
+                if (!in_array($payment_method, $allowed_payment_methods, true)) {
+                    $payment_method = 'Qris';
+                }
+
                 // 2. Create the Master Transaction Record (WITH BACKTICKS AND TOTAL_AMOUNT)
-                $stmt = $pdo->prepare("INSERT INTO `Transaction` (id_user, total_amount, status) VALUES (?, ?, ?)");
-                $stmt->execute([$customer_id, $total_amount, 'Pending']);
+                $stmt = $pdo->prepare("INSERT INTO `Transaction` (id_user, total_amount, status, payment_method) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$customer_id, $total_amount, 'Pending', $payment_method]);
                 $transaction_id = $pdo->lastInsertId();
 
                 // 3. Prepare the order_item insert statement
@@ -153,9 +159,7 @@ if (!empty($_SESSION['cart'])) {
                             <div style="color: var(--gray); font-size: 11px; margin-top: 2px;">From <?= htmlspecialchars($item['shopname']) ?></div>
                             <div style="color: var(--primary); font-weight: bold; font-size: 14px; margin-top: 5px;">Rp <?= number_format($item['price'], 0, ',', '.') ?></div>
                         </div>
-                        <div style="background: #974141; padding: 8px 12px; border-radius: 10px; font-weight: bold; color: var(--dark); font-size: 14px;">
-                            x<?= $item['quantity'] ?>
-                        </div>
+                        <div class="cart-qty-badge">x<?= $item['quantity'] ?></div>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -171,8 +175,14 @@ if (!empty($_SESSION['cart'])) {
                 <span style="color: var(--dark); font-weight: 900; font-size: 22px;">Rp <?= number_format($cart_total, 0, ',', '.') ?></span>
             </div>
 
-            <form method="POST" style="margin: 0;">
+            <form method="POST" style="margin: 0; display: flex; flex-direction: column; gap: 12px;">
                 <input type="hidden" name="action" value="checkout">
+                <label for="payment_method" style="font-size: 13px; font-weight: 700; color: var(--dark);">Payment Method</label>
+                <select id="payment_method" name="payment_method" required style="padding: 12px 14px; border-radius: 12px; border: 1px solid #e5e7eb; background: #fff; color: var(--dark); font-size: 14px; outline: none;">
+                    <option value="Qris">Qris</option>
+                    <option value="Dana">Dana</option>
+                    <option value="Card">Card</option>
+                </select>
                 <button type="submit" class="btn-orange" style="padding: 18px 0; font-size: 16px; box-shadow: 0 5px 15px rgba(255, 118, 34, 0.3);">
                     Place Order Now
                 </button>
