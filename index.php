@@ -115,6 +115,12 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'login';
             case 'admin_dashboard':
                 include 'pages/admin_dashboard.php';
                 break;
+
+            // Kasir
+            case 'kasir_dashboard':
+            case 'kasir':
+                include 'pages/kasir_dashboard.php';
+                break;
                 
             // Fallback (If someone types a wrong URL)
             default:

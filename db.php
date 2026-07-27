@@ -19,6 +19,14 @@ try {
         admin_profile TEXT
     )");
 
+    // Ensure kasir table exists and seed a default kasir account if none exists.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS User_kasir (
+        id_kasir INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL
+    )");
+
     // Ensure the Transaction table has a payment method column for checkout.
     $transactionCols = $pdo->query('PRAGMA table_info("Transaction")')->fetchAll(PDO::FETCH_ASSOC);
     $hasPaymentMethod = false;
@@ -36,6 +44,12 @@ try {
     if ($adminCount == 0) {
         $stmtAdmin = $pdo->prepare("INSERT INTO User_admin (name, email, password, admin_profile) VALUES (?, ?, ?, ?)");
         $stmtAdmin->execute(['Administrator', 'admin@gmail.com', password_hash('admin123', PASSWORD_DEFAULT), '']);
+    }
+
+    $kasirCount = $pdo->query("SELECT COUNT(*) FROM User_kasir")->fetchColumn();
+    if ($kasirCount == 0) {
+        $stmtKasir = $pdo->prepare("INSERT INTO User_kasir (name, email, password) VALUES (?, ?, ?)");
+        $stmtKasir->execute(['Kasir Foodel', 'kasir@gmail.com', password_hash('kasir123', PASSWORD_DEFAULT)]);
     }
 } catch (PDOException $e) {
     echo "Database connection failed: " . $e->getMessage();

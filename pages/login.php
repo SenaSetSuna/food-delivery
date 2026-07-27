@@ -41,8 +41,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // 3. IF NOT A SELLER, CHECK FOR ADMIN
-        $stmt3 = $pdo->prepare("SELECT * FROM User_admin WHERE email = ?");
+        // 3. IF NOT A SELLER, CHECK FOR KASIR
+        $stmt3 = $pdo->prepare("SELECT * FROM User_kasir WHERE email = ?");
+        $stmt3->execute([$email]);
+        $kasir = $stmt3->fetch(PDO::FETCH_ASSOC);
+
+        if ($kasir && password_verify($password, $kasir['password'])) {
+            $_SESSION['kasir_id'] = $kasir['id_kasir'];
+            $_SESSION['username'] = $kasir['name'];
+            $_SESSION['role'] = 'kasir';
+            header('Location: index.php?page=kasir_dashboard');
+            exit;
+        }
+
+        // 4. IF NOT A KASIR, CHECK FOR ADMIN
+        $stmt4 = $pdo->prepare("SELECT * FROM User_admin WHERE email = ?");
         $stmt3->execute([$email]);
         $admin = $stmt3->fetch(PDO::FETCH_ASSOC);
 
@@ -54,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // 4. IF NEITHER MATCHES
+        // 5. IF NEITHER MATCHES
         $error = "Invalid email or password.";
     }
 }
